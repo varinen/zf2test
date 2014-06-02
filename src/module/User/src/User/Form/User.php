@@ -6,8 +6,16 @@ use Zend\InputFilter\InputFilter;
 use Zend\InputFilter\InputFilterInterface;
 use Zend\InputFilter\Factory as InputFactory;
 
+/**
+ * Class User
+ * @package User\Form
+ */
 class User extends Form
 {
+    /**
+     * Creates the form
+     * @param string $name
+     */
     public function __construct($name = 'user')
     {
         parent::__construct($name);
@@ -104,12 +112,21 @@ class User extends Form
         );
     }
 
+    /**
+     * Defines input filters and validators for the form inputs
+     *
+     * @return null|InputFilter|InputFilterInterface
+     */
     public function getInputFilter()
     {
         if (!$this->filter) {
             $inputFilter = new InputFilter();
             $factory = new InputFactory();
 
+            /**
+             * Email input,
+             * filters and valditators
+             */
             $inputFilter->add(
                 $factory->createInput(
                     array(
@@ -144,10 +161,192 @@ class User extends Form
                 )
             );
 
+            /**
+             * Name input,
+             * filters and valditators
+             */
+            $inputFilter->add(
+                $factory->createInput(
+                    array(
+                        'name' => 'name',
+                        'filters' => array(
+                            array(
+                                'name' => 'StripTags'
+                            ),
+                            array(
+                                'name' => 'StringTrim'
+                            )
+                        ),
+                        'validators' => array(
+                            array(
+                                'name' => 'NotEmpty',
+                                'options' => array(
+                                    'messsages' => array(
+                                        'isEmpty' => 'Name is required'
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            );
 
+            /**
+             * Phone input,
+             * filters and valditators
+             */
+            $inputFilter->add(
+                $factory->createInput(
+                    array(
+                        'name' => 'phone',
+                        'filters' => array(
+                            array(
+                                'name' => 'StripTags'
+                            ),
+                            array(
+                                'name' => 'StringTrim'
+                            ),
+                            array(
+                                'name' => 'digits'
+                            ),
+                            array(
+                                'name' => 'stringtrim'
+                            )
+                        ),
+                        'validators' => array(
+                            array(
+                                'name' => 'NotEmpty',
+                                'options' => array(
+                                    'messsages' => array(
+                                        'isEmpty' => 'Phone is required'
+                                    )
+                                )
+                            ),
+                            array(
+                                'name' => 'regex',
+                                'options' => array(
+                                    'pattern' => '/^[\d-\/]+$'
+                                )
+                            )
+                        )
+                    )
+                )
+            );
+
+            /**
+             * Password input,
+             * filters and valditators
+             */
+            $inputFilter->add(
+                $factory->createInput(
+                    array(
+                        'name' => 'password',
+                        'filters' => array(
+                            array(
+                                'name' => 'StripTags'
+                            ),
+                            array(
+                                'name' => 'StringTrim'
+                            )
+                        ),
+                        'validators' => array(
+                            array(
+                                'name' => 'NotEmpty',
+                                'options' => array(
+                                    'messsages' => array(
+                                        'isEmpty' => 'Pasword is required'
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            );
+
+            /**
+             * Password verification input,
+             * filters and valditators
+             */
+            $inputFilter->add(
+                $factory->createInput(
+                    array(
+                        'name' => 'password_verify',
+                        'filters' => array(
+                            array(
+                                'name' => 'StripTags'
+                            ),
+                            array(
+                                'name' => 'StringTrim'
+                            )
+                        ),
+                        'validators' => array(
+                            array(
+                                'name' => 'identical',
+                                'options' => array(
+                                    'token' => 'password'
+                                )
+                            )
+                        )
+                    )
+                )
+            );
+
+            /**
+             * Image upload input,
+             * filters and valditators
+             */
+            $inputFilter->add(
+                $factory->createInput(
+                    array(
+                        'name' => 'photo',
+                        'validators' => array(
+                            array(
+                                'name' => 'filesize',
+                                'options' => array(
+                                    'max' => 2097152
+                                )
+                            ),
+                            array(
+                                'name' => 'filemimetype',
+                                'options' => array(
+                                    'mimeType' => 'image/png,image/x-png,image/jpg,image/jpeg,image/gif'
+                                )
+                            ).
+                            array(
+                                'name' => 'fileimagesize',
+                                'options' => array(
+                                    'maxWidth' => 200,
+                                    'maxHeight' => 200
+                                )
+                            )
+                        ),
+                        'filters' => array(
+                            array(
+                                'name' => 'filerenameupload',
+                                'options' => array(
+                                    'target' => 'data/image/photos/'
+                                )
+                            )
+                        )
+                    )
+                )
+            );
             $this->filter = $inputFilter;
-
         }
         return $this->filter;
+    }
+
+    /**
+     * Prevents assigning an input filter to the user form from the outside
+     *
+     * @param InputFilterInterface $inputFilter
+     *
+     * @return $this|void|\Zend\Form\FormInterface
+     *
+     * @throws \Exception
+     */
+    public function setInputFilter(InputFilterInterface $inputFilter)
+    {
+        throw new \Exception('It is not allowed to set an input filter to this form');
     }
 }
