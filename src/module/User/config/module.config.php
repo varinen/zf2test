@@ -9,7 +9,7 @@ return array(
                     'route' => '/user',
                     'defaults' => array(
                         '__NAMESPACE__' => 'User\Controller',
-                        'controller' => 'Index',
+                        'controller' => 'Account',
                         'action' => 'index'
                     )
                 ),

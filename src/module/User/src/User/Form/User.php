@@ -51,23 +51,37 @@ class User extends Form
             )
         );
 
+        $this->add(array(
+            'name' => 'phone',
+            'options' => array(
+                'label' => 'Phone number'
+            ),
+            'attributes' => array(
+                // Below: HTML5 way to specify that the input will be phone number
+                'type' => 'tel',
+                'required' => 'required',
+                // Below: HTML5 way to specify the allowed characters
+                'pattern'  => '^[\d-/]+$'
+            ),
+        ));
+
         $this->add(
             array(
-                'name' => 'phone',
-                'options' => array(
-                    'label' => 'Phone number'
-                ),
+                'name' => 'password',
+                'type' => 'Zend\Form\Element\Password',
                 'attributes' => array(
-                    'type' => 'tel',
-                    'required' => 'required',
-                    'pattern' => '^[\d-/]+$'
+                    'placeholder' => 'Password here...',
+                    'required' => 'required'
+                ),
+                'options' => array(
+                    'label' => 'Password'
                 )
             )
         );
 
         $this->add(
             array(
-                'name' => 'password',
+                'name' => 'password_verify',
                 'type' => 'Zend\Form\Element\Password',
                 'attributes' => array(
                     'placeholder' => 'Password here...',
@@ -136,7 +150,7 @@ class User extends Form
                                 'name' => 'StripTags',
                             ),
                             array(
-                                'name' => 'StripTrim'
+                                'name' => 'StringTrim'
                             )
                         ),
                         'validators' => array(
@@ -195,43 +209,21 @@ class User extends Form
              * Phone input,
              * filters and valditators
              */
-            $inputFilter->add(
-                $factory->createInput(
-                    array(
-                        'name' => 'phone',
-                        'filters' => array(
-                            array(
-                                'name' => 'StripTags'
-                            ),
-                            array(
-                                'name' => 'StringTrim'
-                            ),
-                            array(
-                                'name' => 'digits'
-                            ),
-                            array(
-                                'name' => 'stringtrim'
-                            )
-                        ),
-                        'validators' => array(
-                            array(
-                                'name' => 'NotEmpty',
-                                'options' => array(
-                                    'messsages' => array(
-                                        'isEmpty' => 'Phone is required'
-                                    )
-                                )
-                            ),
-                            array(
-                                'name' => 'regex',
-                                'options' => array(
-                                    'pattern' => '/^[\d-\/]+$'
-                                )
-                            )
+            $inputFilter->add ( $factory->createInput ( array (
+                'name' => 'phone',
+                'filters' => array(
+                    array ( 'name' => 'digits' ),
+                    array ( 'name' => 'stringtrim' ),
+                ),
+                'validators' => array (
+                    array (
+                        'name' => 'regex',
+                        'options' => array (
+                            'pattern' => '/^[\d-\/]+$/',
                         )
-                    )
+                    ),
                 )
-            );
+            )));
 
             /**
              * Password input,
@@ -311,7 +303,7 @@ class User extends Form
                                 'options' => array(
                                     'mimeType' => 'image/png,image/x-png,image/jpg,image/jpeg,image/gif'
                                 )
-                            ).
+                            ),
                             array(
                                 'name' => 'fileimagesize',
                                 'options' => array(
@@ -324,13 +316,53 @@ class User extends Form
                             array(
                                 'name' => 'filerenameupload',
                                 'options' => array(
-                                    'target' => 'data/image/photos/'
+                                    'target' => 'data/image/photos/',
+                                    'randomize' => true,
                                 )
                             )
                         )
                     )
                 )
             );
+/**
+            $inputFilter->add ( $factory->createInput ( array (
+                'name' => 'photo',
+                'validators' => array (
+                    array (
+                        'name' => 'filesize',
+                        'options' => array (
+                            'max' => 2097152, // 2 MB
+                        ),
+                    ),
+                    array (
+                        'name' => 'filemimetype',
+                        'options' => array (
+                            'mimeType' => 'image/png,image/x-png,image/jpg,image/jpeg,image/gif',
+                        )
+                    ),
+                    array (
+                        'name' => 'fileimagesize',
+                        'options' => array (
+                            'maxWidth' => 200,
+                            'maxHeight' => 200
+                        )
+                    ),
+                ),
+                'filters' => array (
+                    // the filter below will save the uploaded file under
+                    // <app-path>/data/images/photos/<tmp_name>_<random-data>
+                    array (
+                        'name'    => 'filerenameupload',
+                        'options' => array (
+                            // Notice: Make sure that the folder below is existing on your system
+                            //         otherwise this filter will not pass and you will get strange
+                            //         error message reporting that the required field is empty
+                            'target'    => 'data/image/photos/',
+                            'randomize' => true,
+                        ),
+                    ),
+                ),
+            ))); **/
             $this->filter = $inputFilter;
         }
         return $this->filter;

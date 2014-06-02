@@ -2,6 +2,7 @@
 namespace User\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
+use User\Form\User as UserForm;
 
 class AccountController extends AbstractActionController
 {
@@ -12,7 +13,23 @@ class AccountController extends AbstractActionController
 
     public function addAction()
     {
-        return array();
+        $form = new UserForm();
+
+        if ($this->getRequest()->isPost()) {
+
+            $data = array_merge_recursive(
+                $this->getRequest()->getPost()->toArray(),
+                //merge the contents of FILES into the post data
+                $this->getRequest()->getFiles()->toArray()
+            );
+
+            $form->setData($data);
+
+            if ($form->isValid()) {
+                //@todo save data
+            }
+        }
+        return array('form1' => $form);
     }
 
     public function registerAction()
