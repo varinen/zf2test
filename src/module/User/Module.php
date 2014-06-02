@@ -31,4 +31,19 @@ class Module implements AutoloaderProviderInterface
         return include __DIR__ . '/config/module.config.php';
     }
 
+    /**
+     * Module initialization on bootstrap
+     *
+     * @param $e
+     */
+    public function onBootstrap($e)
+    {
+        /**
+         * Sets a global database adapter to be used later in services
+         */
+        $services = $e->getApplication()->getServiceManager();
+        $dbAdapter = $services->get('database');
+        \Zend\Db\TableGateway\Feature\GlobalAdapterFeature::setStaticAdapter($dbAdapter);
+    }
+
 }
